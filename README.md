@@ -13,7 +13,9 @@ Example Usage:
     $ ls
     Gemfile Gemfile.lock
 
-    $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-ruby.git
+    $ heroku create --stack cedar --buildpack http://github.com/spraints/heroku-buildpack-ruby.git
+
+    $ heroku plugins:install http://github.com/heroku/heroku-labs.git
 
     $ heroku labs:enable user_env_compile
 

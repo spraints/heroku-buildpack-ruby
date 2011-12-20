@@ -50,6 +50,7 @@ class LanguagePack::Ruby < LanguagePack::Base
       create_database_yml
       install_binaries
       run_assets_precompile_rake_task
+      run_db_migrate
     end
   end
 
@@ -416,6 +417,13 @@ params = CGI.parse(uri.query || "")
     if rake_task_defined?("assets:precompile")
       topic "Running: rake assets:precompile"
       pipe("env PATH=$PATH:bin bundle exec rake assets:precompile 2>&1")
+    end
+  end
+
+  def run_db_migrate
+    if rake_task_defined?('db:migrate') && ENV['DB_MIGRATE_ON_PUSH'] == 'yes'
+      topic 'Running: rake db:migrate'
+      pipe("env PATH=$PATH:bin bundle exec rake db:migrate 2>&1")
     end
   end
 end

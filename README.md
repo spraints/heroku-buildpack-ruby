@@ -15,6 +15,10 @@ Example Usage:
 
     $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-ruby.git
 
+    $ heroku labs:enable user_env_compile
+
+    $ heroku config:add DB_MIGRATE_ON_PUSH=yes
+
     $ git push heroku master
     ...
     -----> Heroku receiving push
@@ -92,6 +96,7 @@ Example Usage:
     -----> Writing config/database.yml to read from DATABASE_URL
     -----> Preparing app for Rails asset pipeline
            Running: rake assets:precompile
+           Running: rake db:migrate
     -----> Rails plugin injection
            Injecting rails_log_stdout
            Injecting rails3_serve_static_assets
@@ -145,6 +150,7 @@ Ruby (Gemfile and Gemfile.lock is detected)
 * installs binaries
   * installs node if the gem execjs is detected
 * runs `rake assets:precompile` if the rake task is detected
+* runs `rake db:migrate` if the rake task is detected and it's configured to.
 
 Rack (config.ru is detected)
 

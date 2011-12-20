@@ -423,7 +423,6 @@ params = CGI.parse(uri.query || "")
   def run_db_migrate
     if rake_task_defined?('db:migrate') && ENV['DB_MIGRATE_ON_PUSH'] == 'yes'
       topic 'Running: rake db:migrate'
-      pipe("env")
       pipe("env PATH=$PATH:bin bundle exec rake db:migrate 2>&1")
     end
   end

@@ -179,14 +179,16 @@ the following tasks to your Rakefile:
 namespace :heroku do
   namespace :hooks do
     task :after_build => :environment do
-      if Rails.env.qa? && ActiveRecord::Migrator.current_version.to_s == '0'
-        begin
-          Rake::Task['db:schema:load'].invoke
-        rescue
+      if Rails.env.qa?
+        if ActiveRecord::Migrator.current_version.to_s == '0'
+          begin
+            Rake::Task['db:schema:load'].invoke
+          rescue
+            Rake::Task['db:migrate'].invoke
+          end
+        else
           Rake::Task['db:migrate'].invoke
         end
-      else
-        Rake::Task['db:migrate'].invoke
       end
     end
   end

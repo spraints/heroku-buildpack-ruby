@@ -183,3 +183,23 @@ after_build do
   end
 end
 ```
+
+Here's a more complex example, that doesn't auto-migrate in
+production. It also runs `db:schema:load` if the database
+hasn't been migrated at all yet.
+
+```ruby
+after_build do
+  if ENV['DATABASE_URL'] && ENV['RACK_ENV'] != 'production' && ENV['RAILS_ENV'] != 'production'
+    rake = 'env PATH=$PATH:bin bundle exec rake'
+    rake_task = 'db:migrate'
+    if File.exist? 'db/schema.rb'
+      if run("#{rake} db:version") =~ /Current version: 0$/
+        rake_task = 'db:schema:load'
+      end
+    end
+    topic "Running: rake #{rake_task}"
+    pipe("#{rake} #{rake_task} 2>&1")
+  end
+end
+```

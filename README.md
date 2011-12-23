@@ -15,12 +15,6 @@ Example Usage:
 
     $ heroku create --stack cedar --buildpack http://github.com/spraints/heroku-buildpack-ruby.git
 
-    $ heroku plugins:install http://github.com/heroku/heroku-labs.git
-
-    $ heroku labs:enable user_env_compile
-
-    $ heroku config:add DB_MIGRATE_ON_PUSH=yes
-
     $ git push heroku master
     ...
     -----> Heroku receiving push
@@ -152,7 +146,7 @@ Ruby (Gemfile and Gemfile.lock is detected)
 * installs binaries
   * installs node if the gem execjs is detected
 * runs `rake assets:precompile` if the rake task is detected
-* runs `rake db:migrate` if the rake task is detected and it's configured to.
+* runs your `after_build` hook, if defined
 
 Rack (config.ru is detected)
 
@@ -172,3 +166,20 @@ Rails 3 (config/application.rb is detected)
 * install rails 3 plugins
   * [rails3_server_static_assets](https://github.com/pedro/rails3_serve_static_assets)
 
+Hooks
+-----
+
+Hooks provide a way to run custom things during a slug compile.
+
+For example, to run db:migrate at the end of a push, enable `user_env_compile`
+(using the [labs plugin](https://github.com/heroku/heroku-labs)), and add
+`.heroku_hooks.rb` to the root of your repo with this content:
+
+```ruby
+after_build do
+  if ENV['DATABASE_URL']
+    topic 'Running: rake db:migrate'
+    pipe("env PATH=$PATH:bin bundle exec rake db:migrate 2>&1")
+  end
+end
+```

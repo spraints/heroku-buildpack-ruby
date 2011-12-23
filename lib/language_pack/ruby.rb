@@ -421,9 +421,11 @@ params = CGI.parse(uri.query || "")
   end
 
   def run_hook hook
-    if rake_task_defined?("heroku:hooks:#{hook}")
-      topic "Running rake heroku:hooks:#{hook}"
-      pipe("env PATH=$PATH:bin bundle exec rake heroku:hooks:#{hook} 2>&1")
+    task = "heroku:hooks:#{hook}"
+    topic "Checking for rake task #{task}"
+    if rake_task_defined?(task)
+      topic "Running rake #{task}"
+      pipe("env PATH=$PATH:bin bundle exec rake #{task} 2>&1")
     end
   end
 end

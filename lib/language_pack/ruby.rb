@@ -421,36 +421,9 @@ params = CGI.parse(uri.query || "")
   end
 
   def run_hook hook
-    HookRunner.new(self).run(hook)
-  end
-
-  class HookRunner
-    def initialize receiver
-      @receiver = receiver
-    end
-    HOOK_FILE = '.heroku_hooks.rb'
-    def run hook
-      if File.exist? HOOK_FILE
-        hooks = File.read(HOOK_FILE)
-        interpreter_for(hook).instance_eval(hooks, HOOK_FILE)
-      end
-    rescue => e
-      puts "Error while running hook #{hook.inspect}: #{e}"
-      puts e.backtrace
-    end
-    def run! &block
-      @receiver.instance_eval(&block)
-    end
-    def interpreter_for hook
-      Class.new do
-        def initialize(x)
-          @x = x
-        end
-        define_method(hook) do |&block|
-          @x.run! &block
-        end
-        def method_missing(*) ; end
-      end.new(self)
+    if rake_task_defined?("heroku:hooks:#{hook}")
+      topic "Running rake heroku:hooks:#{hook}"
+      pipe("env PATH=$PATH:bin bundle exec rake heroku:hooks:#{hook} 2>&1")
     end
   end
 end

@@ -173,33 +173,22 @@ Hooks provide a way to run custom things during a slug compile.
 
 For example, to run db:migrate at the end of a push, enable `user_env_compile`
 (using the [labs plugin](https://github.com/heroku/heroku-labs)), and add
-`.heroku_hooks.rb` to the root of your repo with this content:
+the following tasks to your Rakefile:
 
 ```ruby
-after_build do
-  if ENV['DATABASE_URL']
-    topic 'Running: rake db:migrate'
-    pipe("env PATH=$PATH:bin bundle exec rake db:migrate 2>&1")
-  end
-end
-```
-
-Here's a more complex example, that doesn't auto-migrate in
-production. It also runs `db:schema:load` if the database
-hasn't been migrated at all yet.
-
-```ruby
-after_build do
-  if ENV['DATABASE_URL'] && ENV['RACK_ENV'] != 'production' && ENV['RAILS_ENV'] != 'production'
-    rake = 'env PATH=$PATH:bin bundle exec rake'
-    rake_task = 'db:migrate'
-    if File.exist? 'db/schema.rb'
-      if run("#{rake} db:version") =~ /Current version: 0$/
-        rake_task = 'db:schema:load'
+namespace :heroku do
+  namespace :hooks do
+    task :after_build => :environment do
+      if Rails.env.qa? && ActiveRecord::Migrator.current_version.to_s == '0'
+        begin
+          Rake::Task['db:schema:load'].invoke
+        rescue
+          Rake::Task['db:migrate'].invoke
+        end
+      else
+        Rake::Task['db:migrate'].invoke
       end
     end
-    topic "Running: rake #{rake_task}"
-    pipe("#{rake} #{rake_task} 2>&1")
   end
 end
 ```

@@ -1,3 +1,73 @@
+## v24
+
+Features:
+
+* removes bundler cache in the slug, to minimize slug size (@stevenh512, #16)
+
+## v23 (5/8/2012)
+
+Bugfixes:
+
+* fix ruby version bug with "fatal:-Not-a-git-repository"
+
+## v22 (5/7/2012)
+
+Features:
+
+* bundler 1.2.0.pre
+* ruby version support for ruby 1.9.2/1.9.3 via bundler's ruby DSL
+
+Deprecation:
+
+* ENV['RUBY_VERSION'] in favor of bundler's ruby DSL
+
+## v21 (3/21/2012)
+
+Features:
+
+* bundler 1.1.2
+
+## v20 (3/12/2012)
+
+Features:
+
+* bundler 1.1.0 \o/
+
+## v19 (1/25/2012)
+
+Bugfixes:
+
+* fix native extension building for rbx 2.0.0dev
+
+## v18 (1/18/2012)
+
+Features:
+
+* JRuby support
+* rbx 2.0.0dev support
+
+Bugfixes:
+
+* force db password to be a string in the yaml file
+
+## v17 (12/29/2011)
+
+Features:
+
+* bundler 1.1.rc.7
+
+## v16 (12/29/2011)
+
+Features:
+
+* pass DATABASE_URL to rails 3.1 assets:precompile rake task detection
+
+## v15 (12/27/2011)
+
+Features:
+
+* bundler 1.1.rc.6
+
 ## v14 (12/22/2011)
 
 Bugfixes:
